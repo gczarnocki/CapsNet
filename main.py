@@ -9,8 +9,9 @@ import data as d
 from capsNet import CapsNet
 from config import cfg
 
+
 def main(_):
-    data = d.load_data(cfg.dataset)
+    data = d.load_data(cfg.dataset, cfg.extended_dataset)
     model = CapsNet()
     n_epochs = cfg.epochs
     n_iterations_per_epoch = data.train.num_examples // cfg.batch_size
@@ -20,7 +21,8 @@ def main(_):
     else:
         validate(data, model)
     #show_images(data, model)
-    
+
+
 def train(restore_checkpoint, n_epochs, n_iterations_per_epoch, n_iterations_validation, data, model):
     with tf.Session() as sess:
         best_loss_val = np.infty
@@ -74,6 +76,7 @@ def train(restore_checkpoint, n_epochs, n_iterations_per_epoch, n_iterations_val
                 save_path = saver.save(sess, checkpoint_path)
                 best_loss_val = loss_val
 
+
 def validate(data, model):
     n_iterations_test = data.test.num_examples // cfg.batch_size
     saver = tf.train.Saver()
@@ -100,6 +103,7 @@ def validate(data, model):
         acc_test = np.mean(acc_tests)
         print("\rFinal test accuracy: {:.4f}%  Loss: {:.6f}".format(
             acc_test * 100, loss_test))
+
 
 def show_images(data, model):
     checkpoint_path = u.get_checkpoint_path()
@@ -135,6 +139,7 @@ def show_images(data, model):
             plt.axis("off")
             
         plt.show()
+
 
 if __name__ == "__main__":
     tf.app.run()
