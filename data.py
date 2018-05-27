@@ -1,4 +1,4 @@
-import numpy as np
+import numpy
 import gzip
 import tensorflow as tf
 from keras.datasets import fashion_mnist, mnist
@@ -53,8 +53,8 @@ class DataSet(object):
         start = self._index_in_epoch
         # Shuffle for the first epoch
         if self._epochs_completed == 0 and start == 0 and shuffle:
-            perm0 = np.arange(self._num_examples)
-            np.random.shuffle(perm0)
+            perm0 = numpy.arange(self._num_examples)
+            numpy.random.shuffle(perm0)
             self._images = self.images[perm0]
             self._labels = self.labels[perm0]
         # Go to the next epoch
@@ -67,8 +67,8 @@ class DataSet(object):
             labels_rest_part = self._labels[start:self._num_examples]
             # Shuffle the data
             if shuffle:
-                perm = np.arange(self._num_examples)
-                np.random.shuffle(perm)
+                perm = numpy.arange(self._num_examples)
+                numpy.random.shuffle(perm)
                 self._images = self.images[perm]
                 self._labels = self.labels[perm]
             # Start next epoch
@@ -77,8 +77,8 @@ class DataSet(object):
             end = self._index_in_epoch
             images_new_part = self._images[start:end]
             labels_new_part = self._labels[start:end]
-            return np.concatenate(
-                (images_rest_part, images_new_part), axis=0), np.concatenate(
+            return numpy.concatenate(
+                (images_rest_part, images_new_part), axis=0), numpy.concatenate(
                     (labels_rest_part, labels_new_part), axis=0)
         else:
             self._index_in_epoch += batch_size
@@ -107,7 +107,7 @@ def get_dataset_from_type(dataset_type):
 
 def reshape_normalize_dataset(dataset, array_size):
     dataset = dataset.reshape(-1, array_size)
-    dataset = np.multiply(dataset, 1.0 / 255.0)
+    dataset = numpy.multiply(dataset, 1.0 / 255.0)
 
     return dataset
 
@@ -127,10 +127,6 @@ def load_dataset(dataset_type):
     return Data(train_images, train_labels, test_images, test_labels)
 
 
-def rotate_array(array, rotations_no):
-    return np.rot90(array, rotations_no)
-
-
 def load_extended_dataset(dataset_type):
     dataset = get_dataset_from_type(dataset_type)
 
@@ -144,11 +140,7 @@ def load_extended_dataset(dataset_type):
     new_shape.append(train_images.shape[0] * 4)
     new_shape = new_shape + list(train_images.shape[1:])
 
-    new_train_images = np.zeros(new_shape)
-
-    for i in range(0, train_images.shape[0]):
-        for j in range(0, 4):
-            new_train_images[4 * i + j] = rotate_array(train_images[i], j)
+    #TODO: moving / rotating
 
     train_images = reshape_normalize_dataset(train_images, img_size)
     test_images = reshape_normalize_dataset(test_images, img_size)
