@@ -11,7 +11,7 @@ from config import cfg
 
 
 def main(_):
-    data = d.load_data(cfg.dataset, cfg.extended_dataset)
+    data = d.load_data(cfg)
     model = CapsNet()
     n_epochs = cfg.epochs
     n_iterations_per_epoch = data.train.num_examples // cfg.batch_size
