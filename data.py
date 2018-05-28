@@ -160,7 +160,7 @@ def get_nth_image_from_operation(image, label, extension_type, j):
     elif extension_type == "rotation":
         out_image = rotate(image, rotations[j])
     elif extension_type == "shift":
-        out_image = rotate(image, shifts[j])
+        out_image = shift(image, shifts[j])
     else:
         raise ValueError("Invalid extension type!")
 
