@@ -10,11 +10,9 @@ import utils as u
 from config import cfg
 
 
-
 class CapsNet:
-    def __init__(self):
-        #placeholder na literki 28x28 pixeli
-        self.X = tf.placeholder(shape=[None, 28, 28, 1], dtype=tf.float32, name="X")
+    def __init__(self, image_axis_size):
+        self.X = tf.placeholder(shape=[None, image_axis_size, image_axis_size, 1], dtype=tf.float32, name="X")
 
         caps1_n_maps = 32
         caps1_n_caps = caps1_n_maps * 6 * 6  # 1152 primary capsules
@@ -190,4 +188,3 @@ class CapsNet:
         optimizer = tf.train.AdamOptimizer()
         self.training_op = optimizer.minimize(self.loss, name="training_op")
         self.saver = tf.train.Saver()
-        
