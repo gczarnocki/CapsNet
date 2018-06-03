@@ -159,7 +159,7 @@ class CapsNet:
 
         n_hidden1 = 512
         n_hidden2 = 1024
-        n_output = 28 * 28
+        n_output = image_axis_size * image_axis_size
 
         with tf.name_scope("decoder"):
             hidden1 = tf.layers.dense(decoder_input, n_hidden1,
