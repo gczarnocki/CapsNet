@@ -115,7 +115,7 @@ def get_dataset_from_type(dataset_type):
     elif dataset_type == "fashion_mnist":
         return fashion_mnist.load_data()
     elif dataset_type == "cifar10":
-        return cifar10.load_data()
+        return prepare_cifar10_dataset(cifar10.load_data())
     else:
         raise Exception('Invalid dataset, please check the name of dataset:', dataset_type)
 
@@ -127,11 +127,11 @@ def reshape_normalize_dataset(dataset, array_size):
     return dataset
 
 
-def convert_to_grayscale(dataset):
-    train_data = dataset[0][0]
-    train_labels = dataset[0][1]
-    test_data = dataset[1][0]
-    test_labels = dataset[1][1]
+def prepare_cifar10_dataset(cifar10_dataset):
+    train_data = cifar10_dataset[0][0]
+    train_labels = cifar10_dataset[0][1]
+    test_data = cifar10_dataset[1][0]
+    test_labels = cifar10_dataset[1][1]
 
     train_data = train_data.mean(axis=3).astype(int)
     test_data = test_data.mean(axis=3).astype(int)
@@ -143,9 +143,6 @@ def convert_to_grayscale(dataset):
 
 def load_dataset(dataset_type):
     dataset = get_dataset_from_type(dataset_type)
-
-    if dataset_type == "cifar10":
-        dataset = convert_to_grayscale(dataset)
 
     # train data -> data -> first element
     img_size = dataset[0][0][0].size
@@ -160,7 +157,7 @@ def load_dataset(dataset_type):
 
 
 def get_parameters_for_extension_type(extension_type):
-    multiplier = {'rotation': 3, 'shift': 5, 'both': 8, 'none': 1}
+    multiplier = {'rotation': 3, 'shift': 5, 'both': 7, 'none': 1}
 
     return multiplier[extension_type]
 
@@ -172,9 +169,7 @@ def crop_image(image, axis_size):
 def get_nth_image_from_operation(image, label, extension_type, j):
     axis_size = image.shape[0]
     rotations = [0.0, -5.0, 5.0]
-    shifts = [(-5, 0), (5, 0), (0, 0), (0, -5), (0, 5)]
-
-    out_image = None
+    shifts = [(0, 0), (-5, 0), (5, 0), (0, -5), (0, 5)]
 
     if (extension_type == "rotation" and j > len(rotations) - 1) or \
             (extension_type == "shift" and j > len(shifts) - 1):
@@ -184,7 +179,7 @@ def get_nth_image_from_operation(image, label, extension_type, j):
         if j < 3:
             out_image = rotate(image, rotations[j])
         elif j >= 3:
-            out_image = shift(image, shifts[j - 3])
+            out_image = shift(image, shifts[j - 3 + 1])
         else:
             raise ValueError("Invalid index!")
     elif extension_type == "rotation":
