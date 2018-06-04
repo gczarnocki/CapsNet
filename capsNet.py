@@ -1,9 +1,5 @@
 from __future__ import division, print_function, unicode_literals
 import tensorflow as tf
-import logging
-
-import matplotlib
-import matplotlib.pyplot as plt
 import numpy as np
 import utils as u
 

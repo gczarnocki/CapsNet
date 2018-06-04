@@ -1,5 +1,5 @@
 import numpy
-from keras.datasets import fashion_mnist, mnist
+from keras.datasets import fashion_mnist, mnist, cifar10
 from scipy.ndimage import rotate, shift
 from math import sqrt
 
@@ -99,7 +99,7 @@ def load_data(cfg):
     dataset_type = cfg.dataset
     extended_dataset = cfg.extended_dataset
 
-    if dataset_type in ('mnist', 'fashion_mnist'):
+    if dataset_type in ('mnist', 'fashion_mnist', 'cifar10'):
         if extended_dataset:
             extension_type = cfg.extension_type
             return load_extended_dataset(dataset_type, extension_type)
@@ -114,6 +114,8 @@ def get_dataset_from_type(dataset_type):
         return mnist.load_data()
     elif dataset_type == "fashion_mnist":
         return fashion_mnist.load_data()
+    elif dataset_type == "cifar10":
+        return cifar10.load_data()
     else:
         raise Exception('Invalid dataset, please check the name of dataset:', dataset_type)
 
@@ -125,8 +127,25 @@ def reshape_normalize_dataset(dataset, array_size):
     return dataset
 
 
+def convert_to_grayscale(dataset):
+    train_data = dataset[0][0]
+    train_labels = dataset[0][1]
+    test_data = dataset[1][0]
+    test_labels = dataset[1][1]
+
+    train_data = train_data.mean(axis=3).astype(int)
+    test_data = test_data.mean(axis=3).astype(int)
+    train_labels = numpy.reshape(train_labels, -1)
+    test_labels = numpy.reshape(test_labels, -1)
+
+    return (train_data, train_labels), (test_data, test_labels)
+
+
 def load_dataset(dataset_type):
     dataset = get_dataset_from_type(dataset_type)
+
+    if dataset_type == "cifar10":
+        dataset = convert_to_grayscale(dataset)
 
     # train data -> data -> first element
     img_size = dataset[0][0][0].size
