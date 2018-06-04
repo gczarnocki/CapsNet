@@ -13,11 +13,12 @@ class CapsNet:
         caps1_n_maps = 32
         caps1_n_caps = caps1_n_maps * 6 * 6  # 1152 primary capsules
         caps1_n_dims = 8
-
+        conv_first_layer_kernel_size = image_axis_size - 19
+		
         #To compute their outputs, we first apply two regular convolutional layers:
         conv1_params = {
             "filters": 256,
-            "kernel_size": 9,
+            "kernel_size": conv_first_layer_kernel_size,
             "strides": 1,
             "padding": "valid",
             "activation": tf.nn.relu,
